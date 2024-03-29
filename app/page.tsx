@@ -57,7 +57,7 @@ export default function Home() {
         {results.map((result: Result, index: number) => (
           <div key={index} className="bg-white text-black rounded p-6 mt-4 w-full animate">
             <hr className="border-green-300"></hr>
-            <Link href={`/${result.place_id}`} className="cursor-pointer hover:underline">
+            <Link href={`/${result.osm_id}`} className="cursor-pointer hover:underline">
               <p>Place ID: {result.place_id}</p>
               <p>Display Name: {result.display_name}</p>
               <p>Latitude: {result.lat}</p>
