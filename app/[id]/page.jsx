@@ -37,7 +37,7 @@ export default function Page({ params }) {
             const lat = data[0][0]?.lat || data[1][0]?.lat || data[2][0]?.lat || 0;
             const lon = data[0][0]?.lon || data[1][0]?.lon || data[2][0]?.lon || 0;
 
-            const overpassResponse = await fetch(`http://overpass-api.de/api/interpreter?data=[out:json];node[shop=supermarket](around:10000,${lat},${lon});out;`);
+            const overpassResponse = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];node[shop=supermarket](around:10000,${lat},${lon});out;`);
             const overpassData = await overpassResponse.json();
             console.log(overpassData);
             setSupermarkets(overpassData.elements);
