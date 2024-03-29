@@ -11,6 +11,7 @@ const DynamicMap = dynamic(
 export default function Page({ params }) {
     const [data, setData] = useState(null);
     const [dataType, setDataType] = useState('');
+    const [supermarkets, setSupermarkets] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,20 +26,21 @@ export default function Page({ params }) {
             if (data[0].length > 0) {
                 setData(data[0]);
                 setDataType('Node');
-                return;
-            }
-    
-            if (data[1].length > 0) {
+            } else if (data[1].length > 0) {
                 setData(data[1]);
                 setDataType('Way');
-                return;
-            }
-    
-            if (data[2].length > 0) {
+            } else if (data[2].length > 0) {
                 setData(data[2]);
                 setDataType('Relation');
-                return;
             }
+            
+            const lat = data[0][0]?.lat || data[1][0]?.lat || data[2][0]?.lat || 0;
+            const lon = data[0][0]?.lon || data[1][0]?.lon || data[2][0]?.lon || 0;
+
+            const overpassResponse = await fetch(`http://overpass-api.de/api/interpreter?data=[out:json];node[shop=supermarket](around:10000,${lat},${lon});out;`);
+            const overpassData = await overpassResponse.json();
+            console.log(overpassData);
+            setSupermarkets(overpassData.elements);
         };
     
         fetchData();
@@ -55,6 +57,8 @@ export default function Page({ params }) {
             <h1>My Post: {params.id}</h1>
             <h2>{dataType} Data</h2>
             <pre>{JSON.stringify(data, null, 2)}</pre>
+            <h2>Supermarkets within 10km</h2>
+            <pre>{JSON.stringify(supermarkets, null, 2)}</pre>
             <div style={{ height: '500px', width: '100%' }}>
                 <DynamicMap position={position} zoom={13} />
             </div>
