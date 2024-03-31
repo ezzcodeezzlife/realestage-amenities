@@ -62,22 +62,34 @@ export default function Page({ params }) {
   ];
 
   return (
-    <div className="bg-gray-700">
-      <div style={{ height: "500px", width: "100%" }}>
+    <div className="flex flex-col items-center justify-center bg-green-500 p-4">
+      <h2 className="flex text-white text-md mb-18">{data && data[0].display_name}</h2>
+      <div className="flex justify-center items-center" style={{ height: "500px", width: "100%" }} >
         <DynamicMap
+       
           position={position}
           pointsOfInterest={pointsOfInterest}
           zoom={13}
         />
       </div>
-      <h1>My Post: {params.id}</h1>
-      <h2>{dataType} Data</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-
-      {/*
-            <h2>Points of Interest within 10km</h2>
-            <pre>{JSON.stringify(pointsOfInterest, null, 2)}</pre>
-*/}
+      <div className="">
+        <h2 className="text-white text-lg mb-2 pt-52">Points of Interest</h2>
+        {pointsOfInterest.length > 0 &&
+          pointsOfInterest.map((poi, index) => (
+            <div key={index} className="mb-4">
+              <h3 className="text-white text-md">
+                {poi.tags.name} -{" "}
+                {poi.tags.amenity ||
+                  poi.tags.shop ||
+                  poi.tags.leisure ||
+                  poi.tags.railway}
+              </h3>
+              <pre className="text-white text-sm">
+                {JSON.stringify(poi, null, 2)}
+              </pre>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

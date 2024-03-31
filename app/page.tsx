@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import Link from "next/link";
 import {
   LocationMarkerIcon,
@@ -31,13 +31,23 @@ export default function Home() {
   const [results, setResults] = useState<Result[]>([]);
   const [isCentered, setIsCentered] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchClicked, setSearchClicked] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedInputValue = localStorage.getItem("inputValue");
+    if (savedInputValue) {
+      setInputValue(savedInputValue);
+    }
+  }, []);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+    localStorage.setItem("inputValue", event.target.value);
   };
 
   const handleSearch = async () => {
     setIsLoading(true);
+    setSearchClicked(true); // Add this line
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
         inputValue
@@ -45,7 +55,6 @@ export default function Home() {
     );
     const data: Result[] = await response.json();
     setResults(data.sort((a, b) => a.importance - b.importance));
-    console.log(data);
     setIsCentered(false);
     setIsLoading(false);
   };
@@ -93,23 +102,38 @@ export default function Home() {
         {results.map((result: Result, index: number) => (
           <div
             key={index}
-            className="bg-green-100 border border-white text-black rounded-lg p-6 mt-4 w-full animate shadow-lg flex flex-col hover:border-black hover:border border-in hover:cursor-pointer hover:underline"
+            className="bg-green-100 border  border-white text-black rounded-lg p-6 mt-4 w-full animate shadow-lg flex flex-col hover:border-black hover:border border-in hover:cursor-pointer hover:underline"
           >
             <div className="w-full  md:pl-4 mt-4 md:mt-0">
               <Link href={`/${result.osm_id}`} className="">
-                <h2 className="text-2xl font-bold mb-2 flex items-center">
-                  <LocationMarkerIcon className="h-12 w-12 min-w-12 text-green-500 mr-2" />
+                <h2 className="text-2xl font-semibold mb-2 flex items-center">
+                  <LocationMarkerIcon className="h-12 w-12 min-w-12 text-green-500 mr-4 " />
                   {result.display_name}
                 </h2>
               </Link>
               <p>
-                <span className="font-bold">Category:</span>{" "}
+                <span className="font-semibold">Category:</span>{" "}
                 {result.category.charAt(0).toUpperCase() +
                   result.category.slice(1)}
               </p>
             </div>
           </div>
         ))}
+       
+        {results.length === 0 &&  searchClicked && (
+          <div className="bg-green-100 border border-white text-black rounded-lg p-6 mt-4 w-full animate shadow-lg flex flex-col hover:border-black hover:border border-in ">
+            <div className="w-full  md:pl-4 mt-4 md:mt-0">
+              <h2 className="text-2xl font-bold mb-2 flex items-center">
+                <InformationCircleIcon className="h-12 w-12 min-w-12 text-green-500 mr-2" />
+                No results found
+              </h2>
+              <p>
+                <span className="font-bold">Try:</span> Searching for a different
+                address
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
