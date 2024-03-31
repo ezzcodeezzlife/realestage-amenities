@@ -54,13 +54,13 @@ export default function Home() {
       )}&format=jsonv2`
     );
     const data: Result[] = await response.json();
-    setResults(data.sort((a, b) => a.importance - b.importance));
+    setResults(data?.sort((a, b) => a.importance - b.importance));
     setIsCentered(false);
     setIsLoading(false);
   };
 
   return (
-    <main className="bg-green-500 min-h-screen flex flex-col justify-center items-center pb-12 text-black">
+    <main className="bg-green-500 min-h-screen flex flex-col justify-center items-center pb-12 text-black p-2">
       {results.length === 0 && (
         <span className=" text-4xl font-bold text-green-100">
           <div className="flex items-center justify-center">
@@ -71,7 +71,7 @@ export default function Home() {
       )}
 
       <div
-        className={`bg-white w-full max-w-md rounded mt-4 p-6 ${
+        className={`bg-white w-full max-w-md rounded mt-4 p-6  ${
           isCentered ? "mt-0" : "mt-10"
         }`}
       >
